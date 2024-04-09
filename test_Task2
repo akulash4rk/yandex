@@ -1,0 +1,29 @@
+let input = readLine()!.split(separator: " ").map { Int($0)! }
+let WeightD = input[0]
+let HeightD = input[1]
+var rowSums = [Int](repeating: 0, count: HeightD)
+var colSums = [Int](repeating: 0, count: WeightD)
+
+
+//граница вложенного прямоугольника
+for rowmin in 0..<HeightD {
+    for rowmax in rowmin..<HeightD {
+        for colmin in 0..<WeightD {
+            for colmax in colmin..<WeightD {
+                
+                //для каждого вложенного прямоугольника прибавляем по единице в сумму строк и столбцов
+                
+                for i in rowmin...rowmax {
+                    for j in colmin...colmax {
+                        rowSums[i] += 1
+                        colSums[j] += 1
+                    }
+                }
+                
+                
+            }
+        }
+    }
+}
+print(rowSums.map { String($0) }.joined(separator: " "))
+print(colSums.map { String($0) }.joined(separator: " "))
