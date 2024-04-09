@@ -1,0 +1,36 @@
+var dic : [Int:String] = [:]
+var keyMax = 1
+var counter = 0
+while keyMax != dic.count{
+    let line = readLine()!
+    let currentCharacters = line.split(separator: "").map{ Int($0)}
+        var currentLine = line.split(separator: "").map{ String?(String($0))}
+        var currentNumber : String? = ""
+
+        for j in 0..<currentCharacters.count{
+            if currentCharacters[j] != nil {
+                currentNumber!.append("\(currentCharacters[j]!)")
+                currentLine[j] = nil
+                counter += 1
+            }
+            else if counter != 0 {
+                break
+            }
+        }
+        counter = 0
+        currentLine = currentLine.filter({ $0 != nil })
+        var result : String = ""
+        result = currentLine.compactMap({$0}).joined(separator: "")
+        let numberInt = Int(currentNumber!)
+
+    if keyMax<numberInt! {
+        keyMax = numberInt!
+    }
+        dic[numberInt!] = result
+
+}
+
+
+for i in 1...dic.count{
+    print(dic[i]!)
+}
