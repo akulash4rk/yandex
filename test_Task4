@@ -1,0 +1,96 @@
+var input = readLine()?.split(separator: " ").compactMap{ Int($0)}
+var array : [[Int]] = []
+let lines = input![0]
+let rows = input![1]
+var mins : Int = Int.max
+
+
+input = readLine()?.split(separator: " ").compactMap{ Int($0)}
+var minCount : Int = Int.max
+var localJ = 0
+var localI = 0
+var startY = input![0]
+var startX = input![1]
+var endY = input![2]
+var endX = input![3]
+
+//MARK: - Array - arr of can move
+var someString = "a"
+for i in 0..<rows*lines {
+    someString.append("a")
+}
+
+array = Array(repeating: Array(repeating: 0, count: rows*3), count: lines*3)
+var arrayOfMoves = Array(repeating: Array(repeating: someString, count: rows*3), count: lines*3)
+
+
+for i in 0..<lines {
+    input = readLine()?.split(separator: " ").compactMap{ Int($0)}
+    for j in 0..<rows{
+        array[i][j+rows] = input![j]
+        array[i][j+rows*2] = input![j]
+        array[i][j] = input![j]
+        array[i+lines][j] = input![j]
+        array[i+lines][j+rows] = input![j]
+        array[i+lines][j+rows*2] = input![j]
+        array[i+lines*2][j] = input![j]
+        array[i+lines*2][j+rows] = input![j]
+        array[i+lines*2][j+rows*2] = input![j]
+    }
+}
+
+move(y: startY+lines, x: startX+rows, stringOfMove: "")
+
+
+func move(y:Int, x: Int, stringOfMove : String){
+    
+    //down
+    if y != 0{
+        if array[y-1][x] == 0 && arrayOfMoves[y-1][x].count > stringOfMove.count {
+            arrayOfMoves[y-1][x] = stringOfMove.appending("N")
+            move(y:y-1, x: x, stringOfMove : stringOfMove.appending("N"))
+        }
+    }
+    
+    //up
+    if y < array.count-1{
+        if array[y+1][x] == 0 && arrayOfMoves[y+1][x].count > stringOfMove.count {
+            arrayOfMoves[y+1][x] = stringOfMove.appending("S")
+            move(y:y+1, x: x, stringOfMove : stringOfMove.appending("S"))
+        }
+    }
+    
+    //left
+    if x != 0{
+        if array[y][x-1] == 0 && arrayOfMoves[y][x-1].count > stringOfMove.count {
+            arrayOfMoves[y][x-1] = stringOfMove.appending("W")
+            move(y:y, x: x-1, stringOfMove : stringOfMove.appending("W"))
+        }
+    }
+    
+    //right
+    if x != array[y].count-1{
+        if array[y][x+1] == 0 && arrayOfMoves[y][x+1].count > stringOfMove.count {
+            arrayOfMoves[y][x+1] = stringOfMove.appending("E")
+            move(y:y, x: x+1, stringOfMove : stringOfMove.appending("E"))
+        }
+    }
+}
+minCount = Int.max
+var minWord = ""
+for i in 0...2 {
+    for j in 0...2{
+        if minCount > arrayOfMoves[endY+i*lines][endX+j*rows].count {
+            minCount = arrayOfMoves[endY+i*lines][endX+j*rows].count
+            minWord = arrayOfMoves[endY+i*lines][endX+j*rows]
+        }
+    }
+}
+
+if minWord.count == rows*lines+1 {
+    print("-1")
+} else {
+    print(minWord)
+}
+
+
