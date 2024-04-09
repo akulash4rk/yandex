@@ -43,36 +43,44 @@ move(y: startY+lines, x: startX+rows, stringOfMove: "")
 
 
 func move(y:Int, x: Int, stringOfMove : String){
-    
+    var newStr = stringOfMove
     //down
     if y != 0{
-        if array[y-1][x] == 0 && arrayOfMoves[y-1][x].count > stringOfMove.count {
-            arrayOfMoves[y-1][x] = stringOfMove.appending("N")
-            move(y:y-1, x: x, stringOfMove : stringOfMove.appending("N"))
+        if array[y-1][x] == 0 && arrayOfMoves[y-1][x].count > newStr.count {
+            newStr += "N"
+            arrayOfMoves[y-1][x] = newStr
+            move(y:y-1, x: x, stringOfMove : newStr)
+            newStr.removeLast()
         }
     }
     
     //up
     if y < array.count-1{
-        if array[y+1][x] == 0 && arrayOfMoves[y+1][x].count > stringOfMove.count {
-            arrayOfMoves[y+1][x] = stringOfMove.appending("S")
-            move(y:y+1, x: x, stringOfMove : stringOfMove.appending("S"))
+        if array[y+1][x] == 0 && arrayOfMoves[y+1][x].count > newStr.count {
+            newStr += "S"
+            arrayOfMoves[y+1][x] = newStr
+            move(y:y+1, x: x, stringOfMove : newStr)
+            newStr.removeLast()
         }
     }
     
     //left
     if x != 0{
-        if array[y][x-1] == 0 && arrayOfMoves[y][x-1].count > stringOfMove.count {
-            arrayOfMoves[y][x-1] = stringOfMove.appending("W")
-            move(y:y, x: x-1, stringOfMove : stringOfMove.appending("W"))
+        if array[y][x-1] == 0 && arrayOfMoves[y][x-1].count > newStr.count {
+            newStr += "W"
+            arrayOfMoves[y][x-1] = stringOfMove
+            move(y:y, x: x-1, stringOfMove : newStr)
+            newStr.removeLast()
         }
     }
     
     //right
     if x != array[y].count-1{
-        if array[y][x+1] == 0 && arrayOfMoves[y][x+1].count > stringOfMove.count {
-            arrayOfMoves[y][x+1] = stringOfMove.appending("E")
-            move(y:y, x: x+1, stringOfMove : stringOfMove.appending("E"))
+        if array[y][x+1] == 0 && arrayOfMoves[y][x+1].count > newStr.count {
+            newStr += "E"
+            arrayOfMoves[y][x+1] = newStr
+            move(y:y, x: x+1, stringOfMove : newStr)
+            newStr.removeLast()
         }
     }
 }
@@ -92,5 +100,3 @@ if minWord.count == rows*lines+1 {
 } else {
     print(minWord)
 }
-
-
