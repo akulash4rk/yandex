@@ -1,0 +1,72 @@
+import Foundation
+var lines: [(Int, String)] = []
+var counter : Int = 1
+var inputData : [String] =  []
+let fileURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath).appendingPathComponent("input.txt")
+do {
+    var data = try String(contentsOf: fileURL, encoding: .utf8)
+    inputData = data.components(separatedBy: "\n")
+    
+    while counter != 0{
+        counter = 0
+        for i in 0..<inputData.count-1 {
+            if inputData[i] != "" && inputData[i+1] != ""{
+                let currMove = inputData[i].split(separator: " ").compactMap{String($0)}
+                let nextMove = inputData[i+1].split(separator: " ").compactMap{String($0)}
+                let countCountMove = inputData[i].split(separator: " ").compactMap{Int($0)}
+                let nextCountMove = inputData[i+1].split(separator: " ").compactMap{Int($0)}
+                
+                if checkForAnt(curr: currMove[0], next: nextMove[0]) == true {
+                    if countCountMove[0] == nextCountMove[0] {
+                        inputData.remove(at: i)
+                        inputData.remove(at: i)
+                        counter += 1
+                        break
+                    }
+                    if countCountMove[0] < nextCountMove[0] {
+                        inputData.remove(at: i)
+                        inputData[i] = "\(nextMove[0]) \(nextCountMove[0]-countCountMove[0])"
+                        counter += 1
+                        break
+                    }
+                    if countCountMove[0] > nextCountMove[0] {
+                        inputData.remove(at: i)
+                        inputData[i] = "\(currMove[0]) \(countCountMove[0]-nextCountMove[0])"
+                        counter += 1
+                        break
+                    }
+                }
+                else if currMove[0] == nextMove[0]{
+                    inputData[i] = "\(currMove[0]) \(countCountMove[0]+nextCountMove[0])"
+                    inputData.remove(at: i+1)
+                    counter += 1
+                    break
+                }
+            }
+        }
+    }
+}
+catch {
+    
+}
+if inputData != [] {
+    for data in inputData{
+        print(data)
+    }
+}
+
+func checkForAnt(curr : String, next: String) -> Bool{
+    if curr == "LEFT" && next == "RIGHT"{
+        return true
+    }
+    if curr == "RIGHT" && next == "LEFT"{
+        return true
+    }
+    if curr == "TOP" && next == "BOTTOM" {
+        return true
+    }
+    if curr == "BOTTOM" && next == "TOP" {
+        return true
+    }
+    return false
+}
