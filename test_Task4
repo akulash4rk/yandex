@@ -1,103 +1,109 @@
-var input = readLine()?.split(separator: " ").compactMap{ Int($0)}
-var array : [[Int]] = []
-let lines = input![0]
-let rows = input![1]
-var mins : Int = Int.max
-
-
-input = readLine()?.split(separator: " ").compactMap{ Int($0)}
-var minCount : Int = Int.max
-var localJ = 0
-var localI = 0
-var startY = input![0]
-var startX = input![1]
-var endY = input![2]
-var endX = input![3]
-
-//MARK: - Array - arr of can move
-var someString = "a"
-for i in 0..<rows*lines {
-    someString.append("a")
-}
-
-array = Array(repeating: Array(repeating: 0, count: rows*3), count: lines*3)
-var arrayOfMoves = Array(repeating: Array(repeating: someString, count: rows*3), count: lines*3)
-
-
-for i in 0..<lines {
-    input = readLine()?.split(separator: " ").compactMap{ Int($0)}
-    for j in 0..<rows{
-        array[i][j+rows] = input![j]
-        array[i][j+rows*2] = input![j]
-        array[i][j] = input![j]
-        array[i+lines][j] = input![j]
-        array[i+lines][j+rows] = input![j]
-        array[i+lines][j+rows*2] = input![j]
-        array[i+lines*2][j] = input![j]
-        array[i+lines*2][j+rows] = input![j]
-        array[i+lines*2][j+rows*2] = input![j]
+import Foundation
+var counter : Int = 1
+var inputData : [String] =  []
+var arr : [[String]] = []
+var finish : [Int] = []
+let fileURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath).appendingPathComponent("input.txt")
+do {
+    let data = try String(contentsOf: fileURL, encoding: .utf8)
+    inputData = data.components(separatedBy: "\n")
+    inputData.remove(at: 0)
+    if inputData.last == "" {
+        inputData.remove(at: inputData.endIndex-1)
     }
-}
-
-move(y: startY+lines, x: startX+rows, stringOfMove: "")
-
-
-func move(y:Int, x: Int, stringOfMove : String){
-    var newStr = stringOfMove
-                  
-    //down
-    if y != 0{
-        if array[y-1][x] == 0 && arrayOfMoves[y-1][x].count > newStr.count {
-            newStr += "N"
-            arrayOfMoves[y-1][x] = newStr
-            move(y:y-1, x: x, stringOfMove : newStr)
-            newStr.removeLast()
-        }
-    }
+    let start = [inputData[0].split(separator: " ").compactMap{Int($0)!}[0], inputData[0].split(separator: " ").compactMap{Int($0)!}[1]]
+    finish = [inputData[0].split(separator: " ").compactMap{Int($0)!}[2], inputData[0].split(separator: " ").compactMap{Int($0)!}[3]]
     
-    //up
-    if y < array.count-1{
-        if array[y+1][x] == 0 && arrayOfMoves[y+1][x].count > newStr.count {
-            newStr += "S"
-            arrayOfMoves[y+1][x] = newStr
-            move(y:y+1, x: x, stringOfMove : newStr)
-            newStr.removeLast()
-        }
-    }
-    
-    //left
-    if x != 0{
-        if array[y][x-1] == 0 && arrayOfMoves[y][x-1].count > newStr.count {
-            newStr += "W"
-            arrayOfMoves[y][x-1] = newStr
-            move(y:y, x: x-1, stringOfMove : newStr)
-            newStr.removeLast()
-        }
-    }
-    
-    //right
-    if x != array[y].count-1{
-        if array[y][x+1] == 0 && arrayOfMoves[y][x+1].count > newStr.count {
-            newStr += "E"
-            arrayOfMoves[y][x+1] = newStr
-            move(y:y, x: x+1, stringOfMove : newStr)
-        }
+    for i in 1..<inputData.count {
+        let intLine = inputData[i].split(separator: " ").compactMap{String($0)}
+        arr.append([])
+        arr[i-1] = intLine
     }
 
-}
-minCount = Int.max
-var minWord = ""
-for i in 0...2 {
-    for j in 0...2{
-        if minCount > arrayOfMoves[endY+i*lines][endX+j*rows].count {
-            minCount = arrayOfMoves[endY+i*lines][endX+j*rows].count
-            minWord = arrayOfMoves[endY+i*lines][endX+j*rows]
+    var queue : [[Int]] = []
+    inputData = []
+    move(startY: start[0], startX: start[1])
+    
+    
+    func move(startY : Int, startX : Int) {
+        
+        if queue != []{
+            queue.remove(at: 0)
+        }
+        
+        if startY == finish[0] && startX == finish[1] {
+            return
+        }
+        
+        if startY+1 == arr.count {
+            if  startY != 0 {
+                if arr[0][startX] == "0" {
+                    arr[0][startX] = arr[startY][startX]+"S"
+                    queue.append([0, startX])
+                }
+            }
+        } else {
+            
+            if arr[startY+1][startX] == "0" {
+                arr[startY+1][startX] = arr[startY][startX]+"S"
+                queue.append([startY+1, startX])
+            }
+        }
+        
+        if startY-1 < 0 {
+            if arr[arr.count-1][startX] == "0" {
+                if arr.count-1 != startY{
+                    arr[arr.count-1][startX] = arr[startY][startX]+"N"
+                    queue.append([arr.count-1, startX])
+                }
+            }
+        } else {
+            if arr[startY-1][startX] == "0" {
+                arr[startY-1][startX] = arr[startY][startX]+"N"
+                queue.append([startY-1, startX])
+            }
+        }
+        
+        if startX+1 == arr[0].count {
+            if arr[startY][0] == "0" {
+                if startX != 0 {
+                    arr[startY][0] = arr[startY][startX]+"E"
+                    queue.append([startY, 0])
+                }
+            }
+        } else {
+            if arr[startY][startX+1] == "0" {
+                arr[startY][startX+1] = arr[startY][startX]+"E"
+                queue.append([startY, startX+1])
+            }
+        }
+        
+        if startX-1 < 0 {
+            if arr[startY][arr[0].count-1] == "0" {
+                if startX != arr[0].count-1 {
+                    arr[startY][arr[0].count-1] = arr[startY][startX]+"W"
+                    queue.append([startY, arr[0].count-1])
+                }
+            }
+        } else {
+            if arr[startY][startX-1] == "0" {
+                if arr[startY][startX-1].count < (arr[startY][startX]+"W").count {
+                    arr[startY][startX-1] = arr[startY][startX]+"W"
+                }
+                
+                queue.append([startY, startX-1])
+            }
+        }
+        if queue != [] {
+            arr[startY][startX] = "z"
+            move(startY: queue[0][0], startX: queue[0][1])
         }
     }
 }
 
-if minWord.count == rows*lines+1 {
-    print("-1")
+
+if arr[finish[0]][finish[1]] == "0" {
+    print(-1)
 } else {
-    print(minWord)
+    print(arr[finish[0]][finish[1]].filter {$0.isLetter})
 }
